@@ -98,27 +98,27 @@ def render_tube(tinggi, warna, efek):
         
     return f"<div class='tube-wrap'><div class='tube-glass'><div class='tube-liquid' style='height:{tinggi}; background:{warna};'>{e_html}</div></div></div>"
 
-# --- ENGINE LOGIKA DETEKSI OTOMATIS (Sudah Sinkron dengan b Kecil) ---
+# --- ENGINE LOGIKA DETEKSI OTOMATIS (Definisi Karbon Alfa yang Diperbarui) ---
 def deteksi_golongan_dari_teks(nama_input):
     nama_lower = nama_input.lower().strip()
     proper_name = nama_input.strip()
     
     if any(k in nama_lower for k in ["1-butanol", "metanol", "etanol", "propanol", "butil alkohol", "primer"]):
-        return "Alkohol Primer", "1-butanol", proper_name, "memiliki gugus fungsi hidroksil ($-OH$) yang terikat langsung pada atom karbon primer ($1^\circ$)."
+        return "Alkohol Primer", "1-butanol", proper_name, "memiliki gugus fungsi hidroksil (-OH) yang terikat pada karbon alfa, di mana karbon alfa tersebut hanya mengikat 1 atom karbon lain."
     elif any(k in nama_lower for k in ["2-butanol", "2-propanol", "isopropanol", "sekunder"]):
-        return "Alkohol Sekunder", "2-butanol", proper_name, "memiliki gugus fungsi hidroksil ($-OH$) yang terikat pada atom karbon sekunder ($2^\circ$)."
+        return "Alkohol Sekunder", "2-butanol", proper_name, "memiliki gugus fungsi hidroksil (-OH) yang terikat pada karbon alfa, di mana karbon alfa tersebut mengikat 2 atom karbon lain."
     elif any(k in nama_lower for k in ["tersier", "t-butil", "2-metil-2-propanol"]):
-        return "Alkohol Tersier", "t-butil alkohol", proper_name, "memiliki gugus fungsi hidroksil ($-OH$) yang terikat pada atom karbon tersier ($3^\circ$)."
+        return "Alkohol Tersier", "t-butil alkohol", proper_name, "memiliki gugus fungsi hidroksil (-OH) yang terikat pada karbon alfa, di mana karbon alfa tersebut mengikat 3 atom karbon lain secara langsung."
     elif any(k in nama_lower for k in ["aldehid", "al", "formaldehida", "metanal", "etanal", "propanal"]):
-        return "Aldehid", "Formaldehida", proper_name, "memiliki gugus fungsi karbonil di ujung rantai dengan satu hidrogen bebas ($-CHO$)."
+        return "Aldehid", "Formaldehida", proper_name, "memiliki gugus fungsi karbonil di ujung rantai dengan satu hidrogen bebas (-CHO)."
     elif any(k in nama_lower for k in ["on", "aseton", "keton", "propanon", "butanon"]):
-        return "Keton", "Aseton", proper_name, "memiliki gugus fungsi karbonil ($\text{C}=\text{O}$) yang diapit oleh dua gugus alkil/karbon."
+        return "Keton", "Aseton", proper_name, "memiliki gugus fungsi karbonil (C=O) yang diapit oleh dua gugus alkil/karbon."
     elif any(k in nama_lower for k in ["asetat", "ester", "at", "propionat"]):
-        return "Ester", "Etil Asetat", proper_name, "memiliki gugus fungsi alkoksi karbonil ($-COOR$). "
+        return "Ester", "Etil Asetat", proper_name, "memiliki gugus fungsi alkoksi karbonil (-COOR)."
     elif any(k in nama_lower for k in ["asam", "karboksilat", "oat"]):
-        return "Asam Karboksilat", "Asam Asetat", proper_name, "memiliki gugus fungsi karboksil ($-COOH$) yang memberikan sifat asam organik."
+        return "Asam Karboksilat", "Asam Asetat", proper_name, "memiliki gugus fungsi karboksil (-COOH) yang memberikan sifat asam organik."
     else:
-        return "Alkana / Hidrokarbon Jenuh", "Heksana", proper_name, "tidak menunjukkan gugus fungsi reaktif oksigen, melainkan tersusun atas ikatan tunggal $\text{C}-\text{H}$ dan $\text{C}-\text{C}$ yang jenuh."
+        return "Alkana / Hidrokarbon Jenuh", "Heksana", proper_name, "tidak menunjukkan gugus fungsi reaktif oksigen, melainkan tersusun atas ikatan tunggal C-H dan C-C yang jenuh."
 
 reagen_colors = {
     "Ceric Nitrat": "#facc15", 
@@ -144,24 +144,25 @@ flowchart_paths = {
     "Heksana": ["Ceric Nitrat", "Na-Bisulfit", "Hidroksilamin (Uji Ester)", "Uji Barit (NaHCO3)"]
 }
 
+# --- DATABASE REAKSI (Alasan yang Disesuaikan & Bersih dari Simbol $) ---
 database_reaksi = {
     "1-butanol": {
         "Ceric Nitrat": {
             "hasil": "(+) Merah Ceri", 
             "reaksi": r"R-OH + [Ce(NO_3)_6]^{2-} \rightarrow [Ce(OR)(NO_3)_5]^{2-} + HNO_3", 
-            "alasan": "Gugus -OH bebas dari sampel bereaksi menggantikan ligan nitrat pada ion Cerium(IV) membentuk senyawa kompleks koordinasi yang berwarna merah ceri.", 
+            "alasan": "Keberadaan gugus hidroksil (-OH) bebas yang terikat pada karbon alfa membuat sampel ini dapat berinteraksi menggantikan ligan nitrat pada ion Cerium(IV), membentuk kompleks koordinasi berwarna merah ceri.", 
             "warna_akhir": "#ef4444", "efek": "none"
         },
         "Pereaksi Jones": {
             "hasil": "(+) Hijau", 
             "reaksi": r"3 R-CH_2OH + 2 CrO_3 + 3 H_2SO_4 \rightarrow 3 R-CHO + Cr_2(SO_4)_3 + 6 H_2O", 
-            "alasan": "Sampel adalah alkohol primer yang memiliki atom hidrogen alfa. Gugus -OH dioksidasi kuat menjadi asam karboksilat, sedangkan Kromium(VI) jingga tereduksi menjadi Kromium(III) hijau.", 
+            "alasan": "Karena karbon alfa yang mengikat gugus -OH hanya berikatan dengan 1 atom karbon lain (alkohol primer), ia masih memiliki 2 hidrogen alfa bebas. Hal ini memungkinkannya dioksidasi kuat menjadi asam karboksilat, mereduksi Kromium(VI) jingga menjadi Kromium(III) hijau.", 
             "warna_akhir": "#10b981", "efek": "none"
         },
         "Pereaksi Lucas (Panas)": {
             "hasil": "(-) Bening", 
             "reaksi": r"R-CH_2OH + HCl \xrightarrow{ZnCl_2, \Delta} \text{Tidak terjadi endapan}", 
-            "alasan": "Karbokation primer sangat tidak stabil. Reaksi substitusi nukleofilik (SN1) tidak berjalan membentuk alkil klorida yang tak larut, bahkan setelah dibantu pemanasan.", 
+            "alasan": "Karena gugus -OH terikat pada karbon alfa yang hanya mengikat 1 atom karbon lain, pembentukan karbokation primer sangat tidak stabil. Akibatnya, reaksi substitusi nukleofilik tidak berjalan meski dibantu pemanasan.", 
             "warna_akhir": "#f8fafc", "efek": "none"
         }
     },
@@ -169,25 +170,25 @@ database_reaksi = {
         "Ceric Nitrat": {
             "hasil": "(+) Merah Ceri", 
             "reaksi": r"R-OH + [Ce(NO_3)_6]^{2-} \rightarrow [Ce(OR)(NO_3)_5]^{2-} + HNO_3", 
-            "alasan": "Ikatan koordinasi terbentuk antara atom oksigen pada gugus hidroksil sekunder dengan logam Cerium pusat, menghasilkan warna merah.", 
+            "alasan": "Adanya gugus -OH yang terikat pada struktur molekulnya memicu pembentukan ikatan koordinasi dengan logam Cerium pusat, menghasilkan warna kompleks merah.", 
             "warna_akhir": "#ef4444", "efek": "none"
         },
         "Pereaksi Jones": {
             "hasil": "(+) Hijau", 
             "reaksi": r"3 R_2CH-OH + 2 CrO_3 + 3 H_2SO_4 \rightarrow 3 R_2C=O + Cr_2(SO_4)_3 + 6 H_2O", 
-            "alasan": "Sampel dioksidasi oleh reagen Jones menjadi keton. Cr(VI) (jingga) tereduksi ke Cr(III) (hijau).", 
+            "alasan": "Sampel adalah alkohol sekunder karena gugus -OH berada di karbon alfa yang mengikat 2 atom karbon lain. Karbon alfa ini masih memiliki 1 hidrogen bebas sehingga bisa dioksidasi oleh reagen Jones menjadi keton, disertai perubahan warna reagen menjadi hijau.", 
             "warna_akhir": "#10b981", "efek": "none"
         },
         "Pereaksi Lucas (Panas)": {
             "hasil": "(+) Emulsi Putih", 
             "reaksi": r"R_2CH-OH + HCl \xrightarrow{ZnCl_2} R_2CH-Cl \downarrow + H_2O", 
-            "alasan": "Karbokation sekunder memiliki stabilitas menengah. Reaksi butuh pemanasan untuk mempercepat substitusi menjadi alkil klorida yang mengeruhkan larutan.", 
+            "alasan": "Karena gugus -OH terikat pada karbon alfa yang memegang 2 atom karbon lain, ia membentuk karbokation sekunder dengan stabilitas sedang. Substitusi berjalan agak lambat dan membutuhkan bantuan panas untuk memisahkan alkil klorida yang mengeruhkan larutan.", 
             "warna_akhir": "#e2e8f0", "efek": "cloudy"
         },
         "Uji Iodoform": {
             "hasil": "(+) Endapan Kuning", 
             "reaksi": r"R-CH(OH)-CH_3 + 4 I_2 + 6 NaOH \rightarrow CHI_3 \downarrow + R-COONa + 5 NaI + 5 H_2O", 
-            "alasan": "Senyawa ini adalah metil karbinol yang dioksidasi iodin menjadi metil keton. Gugus metilnya tersubstitusi menjadi kristal iodoform kuning.", 
+            "alasan": "Struktur alkohol sekunder ini memiliki gugus metil yang terikat langsung pada karbon alfa pengikat -OH (metil karbinol). Gugus metil tersebut dipotong oleh iodin dalam kondisi basa menjadi kristal iodoform kuning.", 
             "warna_akhir": "#fef08a", "efek": "precipitate"
         }
     },
@@ -195,117 +196,91 @@ database_reaksi = {
         "Ceric Nitrat": {
             "hasil": "(+) Merah Ceri", 
             "reaksi": r"R-OH + [Ce(NO_3)_6]^{2-} \rightarrow [Ce(OR)(NO_3)_5]^{2-} + HNO_3", 
-            "alasan": "Terdapat gugus -OH bebas yang dapat berikatan koordinasi membentuk kompleks merah.", 
+            "alasan": "Deteksi positif merah ceri terjadi karena adanya ligan aktif berupa gugus fungsi -OH yang berikatan langsung ke ion Cerium.", 
             "warna_akhir": "#ef4444", "efek": "none"
         },
         "Pereaksi Jones": {
             "hasil": "(-) Tetap Jingga", 
             "reaksi": r"R_3C-OH + CrO_3 + H^+ \rightarrow \text{Tidak bereaksi}", 
-            "alasan": "Alkohol tersier tidak memiliki atom hidrogen alfa, sehingga sangat kebal dan tidak bisa dioksidasi.", 
+            "alasan": "Gugus -OH terikat pada karbon alfa yang sudah mengikat 3 atom karbon lain (alkohol tersier). Hal ini membuat karbon alfa tidak memiliki hidrogen sisa sama sekali, sehingga tidak dapat dioksidasi oleh reagen Jones.", 
             "warna_akhir": "#f97316", "efek": "none"
         },
         "Pereaksi Lucas": {
             "hasil": "(+) Emulsi Putih (Seketika)", 
             "reaksi": r"R_3C-OH + HCl \xrightarrow{ZnCl_2} R_3C-Cl \downarrow + H_2O", 
-            "alasan": "Membentuk karbokation tersier yang sangat stabil. Reaksi (SN1) terjadi seketika menghasilkan endapan alkil klorida.", 
+            "alasan": "Karena gugus -OH terikat pada karbon alfa yang mengikat 3 atom karbon lain, lepasnya gugus fungsi ini menghasilkan karbokation tersier yang sangat stabil. Reaksi substitusi berjalan seketika menghasilkan lapisan keruh alkil klorida tanpa pemanasan.", 
             "warna_akhir": "#94a3b8", "efek": "cloudy"
         }
     },
     "Formaldehida": {
         "Ceric Nitrat": {
-            "hasil": "(-) Kuning", 
-            "reaksi": r"HCHO + [Ce(NO_3)_6]^{2-} \rightarrow \text{Tidak bereaksi}", 
-            "alasan": "Sampel merupakan aldehid dan tidak memiliki gugus hidroksil bebas untuk bereaksi dengan Cerium.", 
-            "warna_akhir": "#facc15", "efek": "none"
+            "hasil": "(-) Kuning", "reaksi": r"HCHO + [Ce(NO_3)_6]^{2-} \rightarrow \text{Tidak bereaksi}", 
+            "alasan": "Sampel merupakan aldehid dan tidak memiliki gugus hidroksil bebas untuk bereaksi dengan Cerium.", "warna_akhir": "#facc15", "efek": "none"
         },
         "Na-Bisulfit": {
-            "hasil": "(+) Endapan Putih", 
-            "reaksi": r"H-CHO + NaHSO_3 \rightarrow H_2C(OH)SO_3Na \downarrow", 
-            "alasan": "Nukleofil bisulfit menyerang karbonil yang miskin elektron, membentuk garam padatan kristal.", 
-            "warna_akhir": "#ffffff", "efek": "precipitate"
+            "hasil": "(+) Endapan Putih", "reaksi": r"H-CHO + NaHSO_3 \rightarrow H_2C(OH)SO_3Na \downarrow", 
+            "alasan": "Nukleofil bisulfit menyerang karbonil yang miskin elektron, membentuk garam padatan kristal.", "warna_akhir": "#ffffff", "efek": "precipitate"
         },
         "Pereaksi Fehling": {
-            "hasil": "(+) Merah Bata", 
-            "reaksi": r"H-CHO + 2 Cu^{2+} + 5 OH^- \rightarrow H-COO^- + Cu_2O \downarrow + 3 H_2O", 
-            "alasan": "Aldehid adalah reduktor kuat. Ia mereduksi Tembaga(II) sulfat biru menjadi endapan Tembaga(I) oksida (merah bata).", 
-            "warna_akhir": "#b91c1c", "efek": "precipitate"
+            "hasil": "(+) Merah Bata", "reaksi": r"H-CHO + 2 Cu^{2+} + 5 OH^- \rightarrow H-COO^- + Cu_2O \downarrow + 3 H_2O", 
+            "alasan": "Aldehid adalah reduktor kuat. Ia mereduksi Tembaga(II) sulfat biru menjadi endapan Tembaga(I) oksida (merah bata).", "warna_akhir": "#b91c1c", "efek": "precipitate"
         },
         "Pereaksi Schiff": {
-            "hasil": "(+) Ungu / Magenta", 
-            "reaksi": r"\text{Aldehid} + \text{Reagen Schiff} \rightarrow \text{Kompleks warna magenta}", 
-            "alasan": "Reaksi adisi spesifik yang memulihkan pewarna p-rosanilin hidroklorida.", 
-            "warna_akhir": "#d946ef", "efek": "none"
+            "hasil": "(+) Ungu / Magenta", "reaksi": r"\text{Aldehid} + \text{Reagen Schiff} \rightarrow \text{Kompleks warna magenta}", 
+            "alasan": "Reaksi adisi spesifik yang memulihkan pewarna p-rosanilin hidroklorida.", "warna_akhir": "#d946ef", "efek": "none"
         }
     },
     "Aseton": {
         "Ceric Nitrat": {
-            "hasil": "(-) Kuning", 
-            "reaksi": r"CH_3COCH_3 + [Ce(NO_3)_6]^{2-} \rightarrow \text{Tidak bereaksi}", 
-            "alasan": "Keton tidak memiliki gugus hidroksil alkoholik.", 
-            "warna_akhir": "#facc15", "efek": "none"
+            "hasil": "(-) Kuning", "reaksi": r"CH_3COCH_3 + [Ce(NO_3)_6]^{2-} \rightarrow \text{Tidak bereaksi}", 
+            "alasan": "Keton tidak memiliki gugus hidroksil alkoholik.", "warna_akhir": "#facc15", "efek": "none"
         },
         "Na-Bisulfit": {
-            "hasil": "(+) Endapan Putih", 
-            "reaksi": r"CH_3-CO-CH_3 + NaHSO_3 \rightarrow (CH_3)_2C(OH)SO_3Na \downarrow", 
-            "alasan": "Sampel masih memiliki halangan sterik rendah, sehingga bisa mengalami reaksi adisi membentuk garam bisulfit.", 
-            "warna_akhir": "#ffffff", "efek": "precipitate"
+            "hasil": "(+) Endapan Putih", "reaksi": r"CH_3-CO-CH_3 + NaHSO_3 \rightarrow (CH_3)_2C(OH)SO_3Na \downarrow", 
+            "alasan": "Sampel masih memiliki halangan sterik rendah, sehingga bisa mengalami reaksi adisi membentuk garam bisulfit.", "warna_akhir": "#ffffff", "efek": "precipitate"
         },
         "Pereaksi Fehling": {
-            "hasil": "(-) Tetap Biru", 
-            "reaksi": r"CH_3-CO-CH_3 + Cu^{2+} \rightarrow \text{Tidak direduksi}", 
-            "alasan": "Keton tidak memiliki atom hidrogen pada karbon pengikat oksigen sehingga tidak memiliki sifat reduktor.", 
-            "warna_akhir": "#3b82f6", "efek": "none"
+            "hasil": "(-) Tetap Biru", "reaksi": r"CH_3-CO-CH_3 + Cu^{2+} \rightarrow \text{Tidak direduksi}", 
+            "alasan": "Keton tidak memiliki atom hidrogen pada karbon pengikat oksigen sehingga tidak memiliki sifat reduktor.", "warna_akhir": "#3b82f6", "efek": "none"
         },
         "Uji Iodoform": {
-            "hasil": "(+) Endapan Kuning", 
-            "reaksi": r"CH_3-CO-CH_3 + 3 I_2 + 4 NaOH \rightarrow CHI_3 \downarrow + CH_3COONa + 3 NaI + 3 H_2O", 
-            "alasan": "Atom hidrogen alfa pada metil keton sangat asam, tersubstitusi oleh Iodin lalu putus membentuk Iodoform kuning.", 
-            "warna_akhir": "#fef08a", "efek": "precipitate"
+            "hasil": "(+) Endapan Kuning", "reaksi": r"CH_3-CO-CH_3 + 3 I_2 + 4 NaOH \rightarrow CHI_3 \downarrow + CH_3COONa + 3 NaI + 3 H_2O", 
+            "alasan": "Atom hidrogen alfa pada metil keton sangat asam, tersubstitusi oleh Iodin lalu putus membentuk Iodoform kuning.", "warna_akhir": "#fef08a", "efek": "precipitate"
         }
     },
     "Etil Asetat": {
         "Ceric Nitrat": {
-            "hasil": "(-) Kuning", 
-            "reaksi": r"\text{Ester} + \text{Ceric Nitrat} \rightarrow \text{Tidak bereaksi}", 
-            "alasan": "Gugus ester tidak bereaksi dengan uji alkohol.", 
-            "warna_akhir": "#facc15", "efek": "none"
+            "hasil": "(-) Kuning", "reaksi": r"\text{Ester} + \text{Ceric Nitrat} \rightarrow \text{Tidak bereaksi}", 
+            "alasan": "Gugus ester tidak bereaksi dengan uji alkohol.", "warna_akhir": "#facc15", "efek": "none"
         },
         "Na-Bisulfit": {
-            "hasil": "(-) Bening", 
-            "reaksi": r"\text{Ester} + NaHSO_3 \rightarrow \text{Tidak bereaksi}", 
-            "alasan": "Resonansi pasangan elektron bebas dari gugus alkoksi menstabilkan karbon karbonil, menjadikannya tidak reaktif terhadap nukleofil lemah.", 
-            "warna_akhir": "#f8fafc", "efek": "none"
+            "hasil": "(-) Bening", "reaksi": r"\text{Ester} + NaHSO_3 \rightarrow \text{Tidak bereaksi}", 
+            "alasan": "Resonansi pasangan elektron bebas dari gugus alkoksi menstabilkan karbon karbonil, menjadikannya tidak reaktif terhadap nukleofil lemah.", "warna_akhir": "#f8fafc", "efek": "none"
         },
         "Hidroksilamin (Uji Ester)": {
             "hasil": "(+) Merah Violet", 
             "reaksi": r"\text{1. } R-COOR' + NH_2OH \rightarrow R-CONHOH + R'OH \quad \text{2. } 3 R-CONHOH + FeCl_3 \rightarrow Fe(R-CONHO)_3 + 3 HCl", 
-            "alasan": "Ester diubah oleh hidroksilamin menjadi asam hidroksamat yang dapat mengikat ion Fe3+ menghasilkan kompleks berwarna violet.", 
+            "alasan": "Ester diubah oleh hidroksilamin menjadi asam hidroksamat yang dapat mengikat ion besi(III) menghasilkan kompleks berwarna violet.", 
             "warna_akhir": "#c026d3", "efek": "none"
         }
     },
     "Asam Asetat": {
         "Ceric Nitrat": {
-            "hasil": "(-) Kuning", 
-            "reaksi": r"CH_3COOH + \text{Ceric Nitrat} \rightarrow \text{Tidak bereaksi}", 
-            "alasan": "Oksigen karboksil ditarik oleh resonansi ikatan rangkap karbonil, menjadikannya kurang nukleofilik untuk berikatan dengan Cerium.", 
-            "warna_akhir": "#facc15", "efek": "none"
+            "hasil": "(-) Kuning", "reaksi": r"CH_3COOH + \text{Ceric Nitrat} \rightarrow \text{Tidak bereaksi}", 
+            "alasan": "Oksigen karboksil ditarik oleh resonansi ikatan rangkap karbonil, menjadikannya kurang nukleofilik untuk berikatan dengan Cerium.", "warna_akhir": "#facc15", "efek": "none"
         },
         "Na-Bisulfit": {
-            "hasil": "(-) Bening", 
-            "reaksi": r"CH_3COOH + NaHSO_3 \rightarrow \text{Tidak bereaksi}", 
-            "alasan": "Bukan senyawa golongan aldehid atau keton.", 
-            "warna_akhir": "#f8fafc", "efek": "none"
+            "hasil": "(-) Bening", "reaksi": r"CH_3COOH + NaHSO_3 \rightarrow \text{Tidak bereaksi}", 
+            "alasan": "Bukan senyawa golongan aldehid atau keton.", "warna_akhir": "#f8fafc", "efek": "none"
         },
         "Hidroksilamin (Uji Ester)": {
-            "hasil": "(-) Bening", 
-            "reaksi": r"CH_3COOH + NH_2OH + FeCl_3 \rightarrow \text{Tidak bereaksi}", 
-            "alasan": "Bukan ester. Asam karboksilat tidak memicu pembentukan asam hidroksamat reaktif di kondisi ini.", 
-            "warna_akhir": "#f8fafc", "efek": "none"
+            "hasil": "(-) Bening", "reaksi": r"CH_3COOH + NH_2OH + FeCl_3 \rightarrow \text{Tidak bereaksi}", 
+            "alasan": "Bukan ester. Asam karboksilat tidak memicu pembentukan asam hidroksamat reaktif di kondisi ini.", "warna_akhir": "#f8fafc", "efek": "none"
         },
         "Uji Barit (NaHCO3)": {
             "hasil": "(+) Gelembung & Keruh", 
             "reaksi": r"\text{1. } CH_3COOH + NaHCO_3 \rightarrow CH_3COONa + H_2O + CO_2 \uparrow \quad \text{2. } CO_2 + Ba(OH)_2 \rightarrow BaCO_3 \downarrow + H_2O", 
-            "alasan": "Asam karboksilat mendonasikan proton untuk mengurai bikarbonat. Gas CO2 yang terlepas bereaksi dengan air barit membentuk BaCO3 yang keruh.", 
+            "alasan": "Asam karboksilat mendonasikan proton untuk mengurai bikarbonat. Gas karbon dioksida yang terlepas bereaksi dengan air barit membentuk barium karbonat yang keruh.", 
             "warna_akhir": "#f8fafc", "efek": "bubbles"
         }
     },
@@ -428,7 +403,7 @@ elif pilihan_halaman == "📘 BAB I. HIDROKARBON":
     st.latex(r"\text{R-CH}=\text{CH-R} + \text{I}_2 \rightarrow \text{R-CH(I)-CH(I)-R}")
     
     st.markdown("""
-    * **Uji Bayer (Oksidasi dengan $KMnO_4$):** Alkena atau alkuna dioksidasi oleh larutan kalium permanganat encer dalam suasana netral/basa menghasilkan senyawa glikol. Uji positif ditandai dengan hilangnya warna ungu $KMnO_4$ dan terbentuknya endapan cokelat $MnO_2$.
+    * **Uji Bayer (Oksidasi dengan $KMnO_4$):** Alkena atau alkuna dioksidasi oleh larutan kalium permanganat encer dalam suasana netral/basa menghasilkan senyawa glikol. Uji positif ditandai dengan hilangnya warna ungu $KMnO_4$ and terbentuknya endapan cokelat $MnO_2$.
     """)
     st.latex(r"3\text{CH}_2=\text{CH}_2 + 2\text{KMnO}_4 + 4\text{H}_2\text{O} \rightarrow 3\text{HO-CH}_2\text{-CH}_2\text{-OH} + 2\text{MnO}_2\downarrow + 2\text{KOH}")
     
@@ -511,7 +486,7 @@ elif pilihan_halaman == "📗 BAB III. ALDEHID DAN KETON":
 
     #### **A. Sifat Fisika**
 
-    Metanal (formaldehida) merupakan suku paling rendah yang berwujud gas pada suhu kamar dengan bau menyengat. Suku-suku aldehida rendah lainnya berupa cairan dengan bau yang semakin harum (seperti aroma buah-buahan) seiring bertambah panjangnya rantai C. Keton suku rendah (seperti aseton atau propanon) berupa cairan encer, mudah larut dalam air, mudah menguap, dan memiliki aroma yang segar.
+    Metanal (formaldehida) merupakan suku paling rendah yang berwujud gas pada suhu kamar dengan bau menyengat. Suku-suku aldehida rendah lainnya berupa cairan dengan bau yang semakin harum (seperti aroma buah-buahan) seiring bertambah panjangnya rantai C. Keton suku rendah (seperti aseton atau propanon) berupa cairan encer, mudah larut dalam air, mudah menguap, and memiliki aroma yang segar.
 
     #### **B. Reaksi Adisi Karbonil**
 
@@ -596,7 +571,7 @@ elif pilihan_halaman == "📕 BAB IV. ASAM KARBOKSILAT DAN DERIVATNYA":
     """)
     st.latex(r"3\text{R-CONH-OH} + \text{FeCl}_3 \rightarrow \text{Fe(R-CONHO)}_3 + 3\text{HCl}")
 
-# --- 🔬 POST TEST (BAGIAN UTAMA PERBAIKAN) ---
+# --- 🔬 POST TEST ---
 elif pilihan_halaman == "🔬 POST TEST":
     st.title("🔀 Smart Flowchart Auto-Analyzer (Step-by-Step)")
     st.write("Ketikkan nama senyawa organik secara bebas. Sistem akan mengidentifikasi golongannya secara instan dan memicu simulasi eliminasi visual.")
@@ -632,7 +607,7 @@ elif pilihan_halaman == "🔬 POST TEST":
         <div class="kotak-analisis">
             <div class="label-analisis">🔍 HASIL DETEKSI GOLONGAN AWAL</div>
             Senyawa <b>"{senyawa}"</b> terdeteksi masuk ke dalam golongan <b>{golongan.upper()}</b>.<br>
-            <span style='color:#555;'><b>Alasan:</b> Karena senyawa ini {alasan_golongan}</span>
+            <span style='color:#555;'><b>Alasan:</b> {alasan_golongan}</span>
         </div>
         """, unsafe_allow_html=True)
         
