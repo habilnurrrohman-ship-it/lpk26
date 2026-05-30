@@ -11,7 +11,7 @@ st.set_page_config(
 )
 
 # ==============================================================================
-# 2. CUSTOM CSS INTERAKTIF (Tema Krem Estetis)
+# 2. CUSTOM CSS INTERAKTIF
 # ==============================================================================
 st.markdown("""
     <style>
@@ -84,7 +84,7 @@ def deteksi_golongan_senyawa(nama_senyawa):
     nama_lower = nama_senyawa.lower().strip()
     proper_name = nama_senyawa.strip()
     if not nama_lower:
-        return None, None, None
+        return "Alkana / Hidrokarbon Jenuh", "Alkana / Hidrokarbon Jenuh", proper_name
         
     if any(k in nama_lower for k in ["1-butil", "1-butanol", "metanol", "etanol", "propanol", "primer"]):
         return "Alkohol Primer", "Alkohol Primer", proper_name
@@ -104,7 +104,7 @@ def deteksi_golongan_senyawa(nama_senyawa):
         return "Alkana / Hidrokarbon Jenuh", "Alkana / Hidrokarbon Jenuh", proper_name
 
 # ==============================================================================
-# 4. DATABASE REAKSI & ALUR FLOWCHART (BERDASARKAN GOLONGAN MUTLAK)
+# 4. DATABASE REAKSI & ALUR FLOWCHART (DINAMIS & AMAN DARI KEYERROR)
 # ==============================================================================
 reagen_colors = {
     "Ceric Nitrat": "#facc15", "Pereaksi Jones": "#f97316", "Pereaksi Lucas": "#f8fafc", 
@@ -124,13 +124,12 @@ flowchart_paths = {
     "Alkana / Hidrokarbon Jenuh": ["Ceric Nitrat", "Na-Bisulfit", "Hidroksilamin (Uji Ester)", "Uji Barit (NaHCO3)"]
 }
 
-# Fungsi generator data reaksi dinamis agar nama senyawa mengikuti input user
 def dapatkan_data_reaksi(golongan, nama_spesifik):
     database = {
         "Alkohol Primer": {
             "Ceric Nitrat": {"hasil": "(+) Merah Ceri", "reaksi": r"R-OH + [Ce(NO_3)_6]^{2-} \rightarrow [Ce(OR)(NO_3)_5]^{2-} + HNO_3", "alasan": f"Gugus -OH bebas pada {nama_spesifik} bereaksi menggantikan ligan nitrat pada ion Cerium(IV) membentuk senyawa kompleks koordinasi berwarna merah ceri.", "warna_akhir": "#ef4444", "efek": "none"},
             "Pereaksi Jones": {"hasil": "(+) Hijau", "reaksi": r"3 R-CH_2OH + 2 CrO_3 + 3 H_2SO_4 \rightarrow 3 R-CHO + Cr_2(SO_4)_3 + 6 H_2O", "alasan": f"{nama_spesifik} merupakan golongan alkohol primer yang memiliki atom hidrogen alfa. Dioksidasi kuat menjadi asam karboksilat, sedangkan Kromium(VI) jingga tereduksi menjadi Kromium(III) hijau.", "warna_akhir": "#10b981", "efek": "none"},
-            "Pereaksi Lucas (Panas)": {"hasil": "(-) Bening", "reaksi": r"R-CH_2OH + HCl \xrightarrow{ZnCl_2, \Delta} \text{Tidak terjadi endapan}", "alasan": f"Karbokation dari {nama_spesifik} sangat tidak stabil karena strukturnya sebagai alkohol primer. Reaksi substitusi nukleofilik tidak berjalan membentuk alkil klorida yang tak larut meski dipanaskan.", "warna_akhir": "#f8fafc", "efek": "none"}
+            "Pereaksi Lucas (Panas)": {"hasil": "(-) Bening", "reaksi": r"R-CH_2OH + HCl \xrightarrow{ZnCl_2, \Delta} \text{Tidak terjadi endapan}", "alasan": f"Karbokation dari {nama_spesifik} sangat tidak stabil karena strukturnya sebagai alkohol primer. Reaksi tidak berjalan membentuk alkil klorida yang tak larut meski dipanaskan.", "warna_akhir": "#f8fafc", "efek": "none"}
         },
         "Alkohol Sekunder": {
             "Ceric Nitrat": {"hasil": "(+) Merah Ceri", "reaksi": r"R-OH + [Ce(NO_3)_6]^{2-} \rightarrow [Ce(OR)(NO_3)_5]^{2-} + HNO_3", "alasan": f"Ikatan koordinasi terbentuk antara atom oksigen pada gugus hidroksil sekunder milik {nama_spesifik} dengan logam Cerium.", "warna_akhir": "#ef4444", "efek": "none"},
@@ -153,7 +152,7 @@ def dapatkan_data_reaksi(golongan, nama_spesifik):
             "Ceric Nitrat": {"hasil": "(-) Kuning", "reaksi": r"\text{Keton} + [Ce(NO_3)_6]^{2-} \rightarrow \text{Tidak bereaksi}", "alasan": f"Senyawa {nama_spesifik} tergolong dalam kelompok keton sehingga tidak memiliki gugus fungsi hidroksil.", "warna_akhir": "#facc15", "efek": "none"},
             "Na-Bisulfit": {"hasil": "(+) Endapan Putih", "reaksi": r"R-CO-CH_3 + NaHSO_3 \rightarrow R-C(OH)(SO_3Na)CH_3 \downarrow", "alasan": f"Gugus keton pada {nama_spesifik} memiliki halangan sterik rendah sehingga dapat mengalami adisi nukleofilik membentuk garam bisulfit berbentuk kristal.", "warna_akhir": "#ffffff", "efek": "precipitate"},
             "Pereaksi Fehling": {"hasil": "(-) Tetap Biru", "reaksi": r"\text{Keton} + Cu^{2+} \rightarrow \text{Tidak direduksi}", "alasan": f"Keton seperti {nama_spesifik} tidak memiliki atom hidrogen langsung pada karbonil sehingga tidak bersifat reduktor terhadap pereaksi Fehling.", "warna_akhir": "#3b82f6", "efek": "none"},
-            "Uji Iodoform": {"hasil": "(+) Endapan Kuning", "reaksi": r"R-CO-CH_3 + 3 I_2 + 4 NaOH \rightarrow CHI_3 \downarrow + R-COONa + 3 NaI + 3 H_2O", "alasan": f"{nama_spesifik} memiliki gugus metil keton. Hidrogen alfa digantikan oleh Iodin dalam suasana basa lalu putus membentuk haloform (iodoform kuning).", "warna_akhir": "#fef08a", "efek": "precipitate"}
+            "Uji Iodoform": {"hasil": "(+) Endapan Kuning", "reaksi": r"R-CO-CH_3 + 3 I_2 + 4 NaOH \rightarrow CHI_3 \downarrow + R-COONa + 3 NaI + 3 H_2O", "alasan": f"{nama_spesifik} memiliki gugus metil keton. Hidrogen alfa digantikan oleh Iodin dalam suasana basa lalu putuk membentuk haloform (iodoform kuning).", "warna_akhir": "#fef08a", "efek": "precipitate"}
         },
         "Ester": {
             "Ceric Nitrat": {"hasil": "(-) Kuning", "reaksi": r"\text{Ester} + \text{Ceric Nitrat} \rightarrow \text{Tidak bereaksi}", "alasan": f"Gugus fungsi ester pada {nama_spesifik} tidak responsif terhadap uji reagen Ceric Nitrat.", "warna_akhir": "#facc15", "efek": "none"},
@@ -173,9 +172,11 @@ def dapatkan_data_reaksi(golongan, nama_spesifik):
             "Uji Barit (NaHCO3)": {"hasil": "(-) Bening", "reaksi": r"\text{Alkana} + NaHCO_3 \rightarrow \text{Tidak bereaksi}", "alasan": f"Senyawa {nama_spesifik} bersifat non-polar dan inert. Karena secara beruntun gagal bereaksi di seluruh uji eliminasi, ini mengonfirmasi sampel adalah alkana.", "warna_akhir": "#f8fafc", "efek": "none"}
         }
     }
-    return database[golongan]
+    return database.get(golongan, database["Alkana / Hidrokarbon Jenuh"])
 
-# State Management
+# ==============================================================================
+# 5. STATE MANAGEMENT
+# ==============================================================================
 if 'test_started' not in st.session_state: st.session_state.test_started = False
 if 'nama_input_user' not in st.session_state: st.session_state.nama_input_user = ""
 if 'senyawa_model' not in st.session_state: st.session_state.senyawa_model = ""
@@ -185,7 +186,7 @@ if 'log_history' not in st.session_state: st.session_state.log_history = []
 if 'trigger_animation' not in st.session_state: st.session_state.trigger_animation = False
 
 # ==============================================================================
-# 5. SIDEBAR NAVIGASI
+# 6. SIDEBAR NAVIGASI
 # ==============================================================================
 with st.sidebar:
     st.image("https://cdn-icons-png.flaticon.com/512/3022/3022607.png", width=70)
@@ -201,10 +202,10 @@ with st.sidebar:
     st.caption("E-Learning Kimia Organik | © 2026")
 
 # ==============================================================================
-# 6. KONTEN HALAMAN (KONDISIONAL)
+# 7. KONTEN HALAMAN
 # ==============================================================================
 
-# --- 1. HALAMAN UTAMA ---
+# --- HALAMAN UTAMA ---
 if pilihan_halaman == "🏠 HALAMAN UTAMA":
     st.markdown("""
         <div class="banner-utama">
@@ -212,36 +213,29 @@ if pilihan_halaman == "🏠 HALAMAN UTAMA":
             <p style='font-size: 1.2em; opacity: 0.95;'>Platform Integrasi Teori, Studi Kasus, dan Simulasi Reaksi Identifikasi Senyawa Organik</p>
         </div>
     """, unsafe_allow_html=True)
-    
     st.subheader("💡 Fitur Utama Aplikasi:")
     st.markdown("""
     *   **📖 Modul Materi Gugus Fungsi**: Berisi rangkuman materi ringkas mengenai prinsip reaksi uji kimia kualitatif.
     *   **🕵️ Case Study (Problem Solving)**: Latihan pemecahan masalah analitis komprehensif berdasarkan data eksperimen nyata.
-    *   **🔬 Smart Lab Simulator**: Fitur mutakhir yang memungkinkan Anda menginput nama senyawa apa saja secara bebas untuk mendeteksi golongannya serta mensimulasikan uji eliminasi visual.
+    *   **🔬 Smart Lab Simulator**: Fitur mutakhir untuk menginput nama senyawa secara bebas untuk mendeteksi golongan serta mensimulasikan uji eliminasi visual secara runtut.
     """)
 
-# --- 2. MODUL MATERI ---
+# --- MODUL MATERI ---
 elif pilihan_halaman == "📖 MODUL MATERI GUGUS FUNGSI":
     st.title("📖 Teori Dasar Identifikasi Gugus Fungsi")
     st.write("Pelajari prinsip dasar uji kualitatif eliminasi yang digunakan di laboratorium kimia organik.")
     st.divider()
-    
     tabs = st.tabs(["🧪 Uji Alkohol", "🍊 Uji Karbonil", "💎 Uji Ester & Asam"])
     
     with tabs[0]:
         st.markdown("""
         <div class='kartu-materi'>
             <h3>1. Uji Ceric Amonium Nitrat</h3>
-            <p>Digunakan untuk mendeteksi keberadaan gugus <b>hidroksil (-OH)</b> alkoholik bebas. Hasil positif ditunjukkan dengan perubahan warna larutan dari kuning menjadi <b>merah ceri</b> akibat pembentukan senyawa kompleks koordinasi.</p>
+            <p>Digunakan untuk mendeteksi keberadaan gugus <b>hidroksil (-OH)</b> alkoholik bebas. Hasil positif ditunjukkan dengan perubahan warna larutan dari kuning menjadi <b>merah ceri</b>.</p>
         </div>
         <div class='kartu-materi'>
             <h3>2. Pereaksi Lucas (ZnCl₂ dalam HCl)</h3>
-            <p>Digunakan untuk membedakan struktur alkohol primer, sekunder, dan tersier berdasarkan kecepatan substitusi pembentukan alkil klorida (emulsi keruh):</p>
-            <ul>
-                <li><b>Tersier:</b> Bereaksi seketika pada suhu kamar.</li>
-                <li><b>Sekunder:</b> Bereaksi setelah 5-10 menit (atau dengan pemanasan).</li>
-                <li><b>Primer:</b> Tidak bereaksi pada suhu kamar.</li>
-            </ul>
+            <p>Membedakan struktur alkohol berdasarkan kecepatan pembentukan emulsi keruh (alkil klorida): Tersier (seketika), Sekunder (5-10 menit/hangat), Primer (tidak bereaksi).</p>
         </div>
         """, unsafe_allow_html=True)
         
@@ -249,11 +243,11 @@ elif pilihan_halaman == "📖 MODUL MATERI GUGUS FUNGSI":
         st.markdown("""
         <div class='kartu-materi'>
             <h3>1. Uji Natrium Bisulfit (NaHSO₃)</h3>
-            <p>Uji umum untuk mendeteksi gugus <b>karbonil (C=O)</b> yang tidak memiliki halangan sterik besar (seperti aldehid dan metil keton). Membentuk produk adisi nukleofilik berupa kristal padat putih.</p>
+            <p>Uji umum untuk mendeteksi gugus <b>karbonil (C=O)</b> rendah halangan sterik (aldehid & metil keton). Membentuk kristal padat putih.</p>
         </div>
         <div class='kartu-materi'>
-            <h3>2. Pereaksi Fehling / Tollens</h3>
-            <p>Membedakan aldehid dengan keton. Aldehid bertindak sebagai reduktor kuat yang mampu mereduksi Fehling menghasilkan endapan <b>merah bata (Cu₂O)</b>.</p>
+            <h3>2. Pereaksi Fehling</h3>
+            <p>Membedakan aldehid dengan keton. Aldehid bertindak sebagai reduktor kuat menghasilkan endapan <b>merah bata (Cu₂O)</b>.</p>
         </div>
         """, unsafe_allow_html=True)
         
@@ -261,43 +255,41 @@ elif pilihan_halaman == "📖 MODUL MATERI GUGUS FUNGSI":
         st.markdown("""
         <div class='kartu-materi'>
             <h3>1. Uji Hidroksamat (Untuk Ester)</h3>
-            <p>Ester direaksikan dengan hidroksilamin membentuk asam hidroksamat, yang kemudian mengkelat ion $Fe^{3+}$ dari $FeCl_3$ menghasilkan kompleks berwarna <b>merah violet</b>.</p>
+            <p>Ester diubah menjadi asam hidroksamat yang mengkelat ion Fe³⁺ menghasilkan kompleks berwarna <b>merah violet</b>.</p>
         </div>
         <div class='kartu-materi'>
-            <h3>2. Uji Bikarbonat & Air Barit (Asam Karboksilat)</h3>
-            <p>Asam karboksilat melepaskan gas $CO_2$ saat didekatkan dengan $NaHCO_3$. Gas tersebut jika dialirkan ke air barit ($Ba(OH)_2$) akan memicu terbentuknya endapan putih $BaCO_3$ yang mengeruhkan larutan.</p>
+            <h3>2. Uji Bikarbonat (Asam Karboksilat)</h3>
+            <p>Asam karboksilat membebaskan gas CO₂ saat direaksikan dengan NaHCO₃, yang kemudian mengeruhkan larutan air barit.</p>
         </div>
         """, unsafe_allow_html=True)
 
-# --- 3. CASE STUDY ---
+# --- CASE STUDY ---
 elif pilihan_halaman == "🕵️ CASUS STUDY (PROBLEM SOLVING)":
     st.title("🕵️ Studi Kasus: Detektif Laboratorium Kimia")
-    st.write("Asah kemampuan berpikir analitis Anda dengan memecahkan problem di bawah ini.")
     st.divider()
-    
-    st.info("📋 **PROBLEM:** Sebuah botol sampel kehilangan labelnya. Seorang laboran melakukan uji kualitatif beruntun dan mendapatkan data sebagai berikut:\n1. Uji Ceric Nitrat ➔ (-) Tetap Kuning\n2. Uji Na-Bisulfit ➔ (+) Terbentuk endapan kristal putih\n3. Pereaksi Fehling ➔ (-) Larutan tetap biru jernih\n4. Uji Iodoform ➔ (+) Terbentuk endapan kuning pekat")
+    st.info("📋 **PROBLEM:** Sebuah botol sampel kehilangan labelnya. Hasil uji kualitatif:\n1. Uji Ceric Nitrat ➔ (-) Tetap Kuning\n2. Uji Na-Bisulfit ➔ (+) Terbentuk endapan kristal putih\n3. Pereaksi Fehling ➔ (-) Larutan tetap biru jernih\n4. Uji Iodoform ➔ (+) Terbentuk endapan kuning pekat")
     
     jawaban = st.radio("Berdasarkan data eliminasi di atas, senyawa apakah yang berada di dalam botol tersebut?", [
         "A. 1-Butanol (Alkohol Primer)",
         "B. Formaldehida (Aldehid)",
         "C. Aseton (Keton / Metil Keton)",
         "D. Asam Asetat (Asam Karboksilat)"
-    ], index=0)
+    ])
     
     if st.button("Kirim Jawaban Analisis 📑", type="primary"):
         if "Aseton" in jawaban:
-            st.success("🎉 **JAWABAN ANDA BENAR!**\n\n**Analisis Eliminasi:**\n*   (-) Ceric Nitrat berarti sampel *bukan alkohol*.\n*   (+) Na-Bisulfit menandakan sampel memiliki *gugus karbonil reaktif*.\n*   (-) Fehling membuktikan ia *bukan aldehid* (berarti golongan keton).\n*   (+) Iodoform memastikan ia jenis *metil keton*. Senyawa yang paling presisi adalah **Aseton**.")
+            st.success("🎉 **JAWABAN ANDA BENAR!**\n\n**Analisis:**\n* Bukan alkohol (Ceric -), punya karbonil (Bisulfit +), bukan aldehid (Fehling -), dan merupakan jenis metil keton (Iodoform +). Maka senyawa tersebut adalah **Aseton**.")
         else:
-            st.error("❌ **JAWABAN KURANG TEPAT.** Coba perhatikan kembali uji Fehling dan Iodoform untuk membedakan aldehid dengan metil keton.")
+            st.error("❌ **JAWABAN KURANG TEPAT.** Perhatikan uji Fehling (negatif) dan Iodoform (positif) untuk menemukan jenis keton yang spesifik.")
 
-# --- 4. SMART LAB SIMULATOR (Modul Berbasis Input Bebas & Dinamis) ---
+# --- SMART LAB SIMULATOR (Dinamis & Bebas Bug KeyError) ---
 elif pilihan_halaman == "🔬 SMART LAB SIMULATOR":
     st.title("🔀 Smart Flowchart Auto-Analyzer Lab")
     st.write("Ketikkan nama senyawa organik secara bebas. Sistem akan memicu skema analisis eliminasi gugus fungsi.")
 
     if not st.session_state.test_started:
         st.divider()
-        input_user = st.text_input("✍️ Masukkan Nama Senyawa Kimia:", placeholder="Misal: Etanol, Propanon, Etil Asetat, Asam Butanoat, Heksana...")
+        input_user = st.text_input("✍️ Masukkan Nama Senyawa Kimia:", placeholder="Misal: Metanol, Propanon, Etil Asetat, Asam Butanoat, Heksana...")
         
         if st.button("Mulai Identifikasi Golongan & Reaksi 🚀", type="primary"):
             if not input_user.strip():
@@ -319,7 +311,9 @@ elif pilihan_halaman == "🔬 SMART LAB SIMULATOR":
         input_user = st.session_state.nama_input_user
         golongan = st.session_state.golongan_terdeteksi
         model_key = st.session_state.senyawa_model
-        urutan = flowchart_paths[model_key]
+        
+        # Mengambil alur flowchart dan database reaksi dengan aman via model_key asli
+        urutan = flowchart_paths.get(model_key, flowchart_paths["Alkana / Hidrokarbon Jenuh"])
         db_reaksi_dinamis = dapatkan_data_reaksi(model_key, input_user)
 
         col_visual, col_log = st.columns([1, 2.5])
@@ -336,32 +330,35 @@ elif pilihan_halaman == "🔬 SMART LAB SIMULATOR":
         with log_container:
             for log in st.session_state.log_history:
                 if "(+)" in log["hasil"]:
-                    st.success(f"**Tahap {log['step']}: {log['pereaksi']}** ➔ **{log['hasil']}**\n\n**Persamaan Reaksi:**")
-                    st.latex(log['reaksi'])
-                    st.write(f"**Mekanisme & Alasan:**\n{log['alasan']}")
+                    st.success(f"**Tahap {log['step']}: {log['pereaksi']}** ➔ **{log['hasil']}**")
                 else:
-                    st.error(f"**Tahap {log['step']}: {log['pereaksi']}** ➔ **{log['hasil']}**\n\n**Persamaan Reaksi:**")
-                    st.latex(log['reaksi'])
-                    st.write(f"**Mekanisme & Alasan:**\n{log['alasan']}")
+                    st.error(f"**Tahap {log['step']}: {log['pereaksi']}** ➔ **{log['hasil']}**")
+                st.latex(log['reaksi'])
+                st.write(f"**Mekanisme & Alasan:**\n{log['alasan']}")
+                st.divider()
 
-        # Logika Simulasi Animasi Pipet & Reagen
+        # Logika Simulasi Animasi Interaktif
         if st.session_state.trigger_animation and st.session_state.current_step < len(urutan):
             pereaksi = urutan[st.session_state.current_step]
             
+            # Efek menuangkan sampel
             tube_placeholder.markdown(render_tube("30%", "#f1f5f9", "none"), unsafe_allow_html=True)
             status_placeholder.markdown(f"<div style='text-align:center;'><em>Menyiapkan sampel {input_user}...</em></div>", unsafe_allow_html=True)
-            time.sleep(0.8)
+            time.sleep(0.6)
             
-            warna_reagen = reagen_colors[pereaksi]
+            # Efek menambahkan reagen
+            warna_reagen = reagen_colors.get(pereaksi, "#f8fafc")
             tube_placeholder.markdown(render_tube("65%", warna_reagen, "none"), unsafe_allow_html=True)
             status_placeholder.markdown(f"<div style='text-align:center;'><em>Mereaksikan dengan {pereaksi}...</em></div>", unsafe_allow_html=True)
-            time.sleep(1.0)
+            time.sleep(0.7)
             
-            res = db_reaksi_dinamis[pereaksi]
+            # Perubahan hasil visual akhir
+            res = db_reaksi_dinamis.get(pereaksi, {"hasil": "(-) Tidak bereaksi", "reaksi": r"\text{Tidak Bereaksi}", "alasan": "Senyawa inert.", "warna_akhir": "#f8fafc", "efek": "none"})
             tube_placeholder.markdown(render_tube("65%", res["warna_akhir"], res["efek"]), unsafe_allow_html=True)
             status_placeholder.markdown("<div style='text-align:center; font-weight:bold;'>Perubahan visual terdeteksi!</div>", unsafe_allow_html=True)
-            time.sleep(0.8)
+            time.sleep(0.5)
             
+            # Simpan ke histori logbook
             st.session_state.log_history.append({
                 "step": st.session_state.current_step + 1,
                 "pereaksi": pereaksi,
@@ -377,7 +374,7 @@ elif pilihan_halaman == "🔬 SMART LAB SIMULATOR":
         elif not st.session_state.trigger_animation:
             if st.session_state.current_step > 0:
                 last_pereaksi = urutan[st.session_state.current_step - 1]
-                res = db_reaksi_dinamis[last_pereaksi]
+                res = db_reaksi_dinamis.get(last_pereaksi, {"warna_akhir": "#f8fafc", "efek": "none"})
                 tube_placeholder.markdown(render_tube("65%", res["warna_akhir"], res["efek"]), unsafe_allow_html=True)
             
             if st.session_state.current_step < len(urutan):
