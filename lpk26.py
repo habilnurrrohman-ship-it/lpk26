@@ -11,28 +11,28 @@ st.set_page_config(
 )
 
 # ==============================================================================
-# 2. CUSTOM CSS INTERAKTIF (Digabung & Diperbarui dengan Tema Krem)
+# 2. CUSTOM CSS INTERAKTIF (Tema Krem)
 # ==============================================================================
 st.markdown("""
     <style>
     /* Mengubah Latar Belakang Seluruh Aplikasi Menjadi Krem */
     .stApp {
         background-color: #fdfbf7;
-        color: #2c3e50; /* Menjaga warna teks utama tetap kontras dan nyaman dibaca */
+        color: #2c3e50;
     }
     
-    /* Mengubah Latar Belakang Sidebar agar Senada namun Tetap Terpisah */
+    /* Mengubah Latar Belakang Sidebar */
     [data-testid="stSidebar"] {
         background-color: #f5efe6;
     }
 
-    /* Desain Kotak Hasil Analisis yang Unik & Modern */
+    /* Kotak Hasil Analisis */
     .kotak-analisis {
         border-left: 6px solid #2ecc71;
         border-radius: 8px;
         padding: 20px;
         margin-bottom: 20px;
-        background-color: #ffffff; /* Mengubah ke putih murni agar kontras di atas latar krem */
+        background-color: #ffffff;
         box-shadow: 0 4px 6px rgba(0,0,0,0.04);
     }
     .label-analisis {
@@ -43,7 +43,7 @@ st.markdown("""
         text-transform: uppercase;
         letter-spacing: 0.5px;
     }
-    /* Desain Banner Gradasi untuk Halaman Utama */
+    /* Banner Gradasi Halaman Utama */
     .banner-utama {
         background: linear-gradient(135deg, #11998e, #38ef7d);
         padding: 35px;
@@ -85,7 +85,7 @@ def force_rerun():
     elif hasattr(st, 'experimental_rerun'):
         st.experimental_rerun()
     else:
-        st.warning("⚠️ Versi Streamlit sangat usang. Silakan refresh halaman secara manual (F5).")
+        st.warning("⚠️ Versi Streamlit usang. Silakan refresh halaman secara manual (F5).")
 
 def render_tube(tinggi, warna, efek):
     e_html = ""
@@ -98,17 +98,17 @@ def render_tube(tinggi, warna, efek):
         
     return f"<div class='tube-wrap'><div class='tube-glass'><div class='tube-liquid' style='height:{tinggi}; background:{warna};'>{e_html}</div></div></div>"
 
-# --- ENGINE LOGIKA DETEKSI OTOMATIS (Fungsi Baru untuk Post Test Fleksibel) ---
+# --- ENGINE LOGIKA DETEKSI OTOMATIS (Sudah Sinkron dengan b Kecil) ---
 def deteksi_golongan_dari_teks(nama_input):
     nama_lower = nama_input.lower().strip()
     proper_name = nama_input.strip()
     
     if any(k in nama_lower for k in ["1-butanol", "metanol", "etanol", "propanol", "butil alkohol", "primer"]):
-        return "Alkohol Primer", "1-Butanol", proper_name, "memiliki gugus fungsi hidroksil ($-OH$) yang terikat langsung pada atom karbon primer ($1^\circ$)."
+        return "Alkohol Primer", "1-butanol", proper_name, "memiliki gugus fungsi hidroksil ($-OH$) yang terikat langsung pada atom karbon primer ($1^\circ$)."
     elif any(k in nama_lower for k in ["2-butanol", "2-propanol", "isopropanol", "sekunder"]):
-        return "Alkohol Sekunder", "2-Butanol", proper_name, "memiliki gugus fungsi hidroksil ($-OH$) yang terikat pada atom karbon sekunder ($2^\circ$)."
+        return "Alkohol Sekunder", "2-butanol", proper_name, "memiliki gugus fungsi hidroksil ($-OH$) yang terikat pada atom karbon sekunder ($2^\circ$)."
     elif any(k in nama_lower for k in ["tersier", "t-butil", "2-metil-2-propanol"]):
-        return "Alkohol Tersier", "t-Butil Alkohol", proper_name, "memiliki gugus fungsi hidroksil ($-OH$) yang terikat pada atom karbon tersier ($3^\circ$)."
+        return "Alkohol Tersier", "t-butil alkohol", proper_name, "memiliki gugus fungsi hidroksil ($-OH$) yang terikat pada atom karbon tersier ($3^\circ$)."
     elif any(k in nama_lower for k in ["aldehid", "al", "formaldehida", "metanal", "etanal", "propanal"]):
         return "Aldehid", "Formaldehida", proper_name, "memiliki gugus fungsi karbonil di ujung rantai dengan satu hidrogen bebas ($-CHO$)."
     elif any(k in nama_lower for k in ["on", "aseton", "keton", "propanon", "butanon"]):
@@ -134,9 +134,9 @@ reagen_colors = {
 }
 
 flowchart_paths = {
-    "1-Butanol": ["Ceric Nitrat", "Pereaksi Jones", "Pereaksi Lucas (Panas)"],
-    "2-Butanol": ["Ceric Nitrat", "Pereaksi Jones", "Pereaksi Lucas (Panas)", "Uji Iodoform"],
-    "t-Butil Alkohol": ["Ceric Nitrat", "Pereaksi Jones", "Pereaksi Lucas"],
+    "1-butanol": ["Ceric Nitrat", "Pereaksi Jones", "Pereaksi Lucas (Panas)"],
+    "2-butanol": ["Ceric Nitrat", "Pereaksi Jones", "Pereaksi Lucas (Panas)", "Uji Iodoform"],
+    "t-butil alkohol": ["Ceric Nitrat", "Pereaksi Jones", "Pereaksi Lucas"],
     "Formaldehida": ["Ceric Nitrat", "Na-Bisulfit", "Pereaksi Fehling", "Pereaksi Schiff"],
     "Aseton": ["Ceric Nitrat", "Na-Bisulfit", "Pereaksi Fehling", "Uji Iodoform"],
     "Etil Asetat": ["Ceric Nitrat", "Na-Bisulfit", "Hidroksilamin (Uji Ester)"],
@@ -145,7 +145,7 @@ flowchart_paths = {
 }
 
 database_reaksi = {
-    "1-Butanol": {
+    "1-butanol": {
         "Ceric Nitrat": {
             "hasil": "(+) Merah Ceri", 
             "reaksi": r"R-OH + [Ce(NO_3)_6]^{2-} \rightarrow [Ce(OR)(NO_3)_5]^{2-} + HNO_3", 
@@ -165,7 +165,7 @@ database_reaksi = {
             "warna_akhir": "#f8fafc", "efek": "none"
         }
     },
-    "2-Butanol": {
+    "2-butanol": {
         "Ceric Nitrat": {
             "hasil": "(+) Merah Ceri", 
             "reaksi": r"R-OH + [Ce(NO_3)_6]^{2-} \rightarrow [Ce(OR)(NO_3)_5]^{2-} + HNO_3", 
@@ -191,7 +191,7 @@ database_reaksi = {
             "warna_akhir": "#fef08a", "efek": "precipitate"
         }
     },
-    "t-Butil Alkohol": {
+    "t-butil alkohol": {
         "Ceric Nitrat": {
             "hasil": "(+) Merah Ceri", 
             "reaksi": r"R-OH + [Ce(NO_3)_6]^{2-} \rightarrow [Ce(OR)(NO_3)_5]^{2-} + HNO_3", 
@@ -388,7 +388,6 @@ if pilihan_halaman == "🏠 HALAMAN UTAMA":
         "Platform ini dirancang khusus untuk membantu mahasiswa/siswa memahami materi teoritis "
         "sekaligus visualisasi reaksi uji kualitatif senyawa organik di laboratorium secara interaktif."
     )
-    
     st.markdown("---")
     st.markdown("""
     ### **RANGKUMAN MATERI PRAKTIKUM KIMIA ORGANIK**
@@ -419,7 +418,6 @@ elif pilihan_halaman == "📘 BAB I. HIDROKARBON":
     * Disebut juga parafin (afinitas kecil) karena sangat tidak reaktif terhadap sebagian besar pereaksi seperti asam kuat, basa kuat, dan oksidator pada suhu kamar.
     * **Uji Iodo (Substitusi Halogen):** Alkana dapat bereaksi dengan halogen ($I_2$) melalui reaksi substitusi radikal bebas dengan bantuan paparan sinar ultraviolet (UV) atau pemanasan tinggi. Reaksi berjalan lambat dan ditandai dengan memudarnya warna ungu dari iodium.
     """)
-    
     st.latex(r"\text{CH}_4 + \text{I}_2 \xrightarrow{\text{Sinar UV / }\Delta} \text{CH}_3\text{I} + \text{HI}")
     
     st.markdown("""
@@ -427,13 +425,11 @@ elif pilihan_halaman == "📘 BAB I. HIDROKARBON":
     * Sangat reaktif karena memiliki ikatan rangkap ($\text{C}=\text{C}$ atau $\text{C}\equiv\text{C}$) yang kaya akan elektron, sehingga mudah mengalami pemutusan ikatan rangkap (adisi).
     * **Uji Adisi Iodium:** Mengadisi halogen pada ikatan rangkap tanpa memerlukan bantuan sinar UV. Ditandai dengan warna ungu iodium yang memudar/hilang seketika.
     """)
-    
     st.latex(r"\text{R-CH}=\text{CH-R} + \text{I}_2 \rightarrow \text{R-CH(I)-CH(I)-R}")
     
     st.markdown("""
     * **Uji Bayer (Oksidasi dengan $KMnO_4$):** Alkena atau alkuna dioksidasi oleh larutan kalium permanganat encer dalam suasana netral/basa menghasilkan senyawa glikol. Uji positif ditandai dengan hilangnya warna ungu $KMnO_4$ dan terbentuknya endapan cokelat $MnO_2$.
     """)
-    
     st.latex(r"3\text{CH}_2=\text{CH}_2 + 2\text{KMnO}_4 + 4\text{H}_2\text{O} \rightarrow 3\text{HO-CH}_2\text{-CH}_2\text{-OH} + 2\text{MnO}_2\downarrow + 2\text{KOH}")
     
     st.markdown("""
@@ -441,13 +437,11 @@ elif pilihan_halaman == "📘 BAB I. HIDROKARBON":
     * Memiliki struktur siklik dengan elektron pi yang terdelokalisasi (resonansi) yang memenuhi aturan Hückel ($4n+2$), membuat intinya sangat stabil.
     * **Uji Bakar:** Ketika dibakar dengan api langsung pada cawan porselin, benzena menghasilkan nyala api berminyak disertai jelaga hitam yang sangat tebal. Jelaga ini terbentuk akibat tingginya persentase kadar karbon dalam benzena dibandingkan kadar hidrogennya.
     """)
-    
     st.latex(r"\text{Benzena} + \text{O}_2 \rightarrow \text{C}_{(s)\text{ [Jelaga hitam]}} + \text{CO} + \text{H}_2\text{O}")
     
     st.markdown("""
     * **Reaksi Substitusi Elektrofilik:** Benzena sukar mengalami adisi melainkan cenderung mengalami reaksi substitusi. Contohnya adalah reaksi Nitrasi menggunakan campuran asam nitrat pekat dan asam sulfat pekat sebagai katalis.
     """)
-    
     st.latex(r"\text{C}_6\text{H}_6 + \text{HNO}_3 \xrightarrow{\text{H}_2\text{SO}_4\text{ pekat}} \text{C}_6\text{H}_5\text{NO}_2 + \text{H}_2\text{O}")
 
 # --- BAB II ---
@@ -469,7 +463,6 @@ elif pilihan_halaman == "📙 BAB II. ALKOHOL, ETER, DAN FENOL":
     * Alkohol $2^\circ$: Bereaksi dalam waktu 5–10 menit dengan sedikit pemanasan.
     * Alkohol $1^\circ$: Tidak bereaksi pada suhu kamar.
     """)
-    
     st.latex(r"\text{R}_3\text{C-OH} + \text{HCl} \xrightarrow{\text{ZnCl}_2} \text{R}_3\text{C-Cl}\downarrow + \text{H}_2\text{O}")
     
     st.markdown("""
@@ -478,20 +471,17 @@ elif pilihan_halaman == "📙 BAB II. ALKOHOL, ETER, DAN FENOL":
     * Alkohol $2^\circ$ dioksidasi menjadi Keton.
     * Alkohol $3^\circ$ tidak dapat dioksidasi (warna tetap jingga).
     """)
-    
     st.latex(r"\text{R-CH}_2\text{-OH} \xrightarrow{\text{CrO}_3/\text{H}_2\text{SO}_4} \text{R-COOH}")
     st.latex(r"\text{R}_2\text{CH-OH} \xrightarrow{\text{CrO}_3/\text{H}_2\text{SO}_4} \text{R}_2\text{C}=\text{O}")
     
     st.markdown("""
     **3. Uji Iodoform:** Khusus untuk alkohol yang memiliki gugus metil alfa ($\text{CH}_3\text{-CH(OH)-}$), seperti etanol atau 2-propanol. Bereaksi dengan $I_2$ dalam suasana basa ($NaOH$) membentuk endapan kuning kristal iodoform ($CHI_3$) yang berbau khas.
     """)
-    
     st.latex(r"\text{R-CH(OH)-CH}_3 + 4\text{I}_2 + 6\text{NaOH} \rightarrow \text{R-COONa} + \text{CHI}_3\downarrow + 5\text{NaI} + 5\text{H}_2\text{O}")
     
     st.markdown("""
     **4. Pereaksi Ceric Ammonium Nitrate (CAN):** Alkohol bereaksi membentuk senyawa kompleks koordinasi berwarna merah cerah, sedangkan eter memberikan hasil negatif (warna tetap).
     """)
-    
     st.latex(r"\text{ROH} + [ \text{Ce(NO}_3)_6 ]^{2-} \rightarrow [ \text{Ce(OR)(NO}_3)_5 ]^{2-} + \text{HNO}_3")
     
     st.markdown("""
@@ -499,19 +489,16 @@ elif pilihan_halaman == "📙 BAB II. ALKOHOL, ETER, DAN FENOL":
 
     **1. Reaksi dengan Basa Kuat ($NaOH$):** Membentuk garam natrium fenoksida yang larut dalam air (menunjukkan sifat asam lemah fenol).
     """)
-    
     st.latex(r"\text{C}_6\text{H}_5\text{OH} + \text{NaOH} \rightarrow \text{C}_6\text{H}_5\text{ONa} + \text{H}_2\text{O}")
     
     st.markdown("""
     **2. Uji Besi(III) Klorida ($FeCl_3$):** Ion fenoksida membentuk senyawa kompleks koordinasi dengan besi(III) yang menghasilkan warna ungu tua/kehitaman yang khas.
     """)
-    
-    st.latex(r"6\text{C}_6\text{H}_5\text{OH} + \text{FeCl}_3 \rightarrow $[\text{Fe}(\text{OC}_6\text{H}_5)_6]^{3-} + 3\text{H}^+ + 3\text{Cl}^-")
+    st.latex(r"6\text{C}_6\text{H}_5\text{OH} + \text{FeCl}_3 \rightarrow [\text{Fe}(\text{OC}_6\text{H}_5)_6]^{3-} + 3\text{H}^+ + 3\text{Cl}^-")
     
     st.markdown("""
     **3. Reaksi Substitusi Aromatik (Trisubstitusi Air Brom):** Cincin aromatik pada fenol sangat reaktif karena efek aktivasi dari gugus $-OH$. Jika direaksikan dengan air brom ($Br_2/H_2O$) yang bersifat polar, akan langsung mengalami trisubstitusi membentuk endapan putih 2,4,6-tribromofenol.
     """)
-    
     st.latex(r"\text{C}_6\text{H}_5\text{OH} + 3\text{Br}_2 \rightarrow \text{C}_6\text{H}_2\text{Br}_3\text{OH}\downarrow + 3\text{HBr}")
 
 # --- BAB III ---
@@ -520,7 +507,7 @@ elif pilihan_halaman == "📗 BAB III. ALDEHID DAN KETON":
     st.write("---")
     
     st.markdown("""
-    Aldehida ($\text{R-CHO}$) dan keton ($\text{R-CO-R'}$) are senyawa organik isomer fungsional yang sama-sama memiliki gugus fungsi karbonil ($\text{C}=\text{O}$). Perbedaan utamanya terletak pada atom C karbonil aldehida yang mengikat minimal satu atom hidrogen, sedangkan pada keton terikat pada dua gugus alkil/aril.
+    Aldehida ($\text{R-CHO}$) dan keton ($\text{R-CO-R'}$) adalah senyawa organik isomer fungsional yang sama-sama memiliki gugus fungsi karbonil ($\text{C}=\text{O}$). Perbedaan utamanya terletak pada atom C karbonil aldehida yang mengikat minimal satu atom hidrogen, sedangkan pada keton terikat pada dua gugus alkil/aril.
 
     #### **A. Sifat Fisika**
 
@@ -530,13 +517,11 @@ elif pilihan_halaman == "📗 BAB III. ALDEHID DAN KETON":
 
     **1. Adisi Natrium Bisulfit ($NaHSO_3$):** Reaksi adisi nukleofilik pada gugus karbonil aldehida atau metil keton menghasilkan senyawa aduk berupa kristal padat berwarna putih yang sukar larut.
     """)
-    
     st.latex(r"\text{R-CHO} + \text{NaHSO}_3 \rightarrow \text{R-CH(OH)-SO}_3\text{Na}")
     
     st.markdown("""
     **2. Pembentukan Hemiasetal dan Asetal:** Reaksi reversibel gugus karbonil dengan alkohol dalam suasana asam gas $HCl$.
     """)
-    
     st.latex(r"\text{R-CHO} + \text{R'OH} \xrightarrow{\text{HCl}} \text{R-CH(OH)(OR')}")
     st.latex(r"\text{R-CH(OH)(OR')} + \text{R'OH} \xrightarrow{\text{HCl}} \text{R-CH(OR')}_2 + \text{H}_2\text{O}")
     
@@ -547,19 +532,16 @@ elif pilihan_halaman == "📗 BAB III. ALDEHID DAN KETON":
 
     **1. Uji Tollens (Cermin Perak):** Aldehida mengeksidasi dirinya menjadi asam karboksilat sekaligus mereduksi ion kompleks perak beramoniak $[\text{Ag(NH}_3)_2]^+$ menjadi logam perak mendesak yang menempel di dinding tabung reaksi membentuk cermin perak.
     """)
-    
     st.latex(r"\text{R-CHO} + 2[\text{Ag(NH}_3)_2]^+ + 3\text{OH}^- \rightarrow \text{R-COO}^- + 2\text{Ag}\downarrow + 4\text{NH}_3 + 2\text{H}_2\text{O}")
     
     st.markdown("""
     **2. Uji Fehling:** Aldehida mereduksi ion $\text{Cu}^{2+}$ yang berada dalam bentuk kompleks tartrat basa, menghasilkan endapan merah bata kupro oksida ($\text{Cu}_2\text{O}$).
     """)
-    
     st.latex(r"\text{R-CHO} + 2\text{Cu}^{2+} + 5\text{OH}^- \rightarrow \text{R-COO}^- + \text{Cu}_2\text{O}\downarrow + 3\text{H}_2\text{O}")
     
     st.markdown("""
     **3. Uji Benedict:** Memiliki prinsip kerja yang serupa dengan Uji Fehling, namun ion $\text{Cu}^{2+}$ dikomplekskan oleh sitrat. Pereaksi berada dalam kondisi alkalis lemah untuk menghasilkan endapan merah bata $\text{Cu}_2\text{O}$ saat direaksikan dengan aldehida.
     """)
-    
     st.latex(r"\text{R-CHO} + 2\text{Cu}^{2+} + 5\text{OH}^- \rightarrow \text{R-COO}^- + \text{Cu}_2\text{O}\downarrow + 3\text{H}_2\text{O}")
 
 # --- BAB IV ---
@@ -578,31 +560,26 @@ elif pilihan_halaman == "📕 BAB IV. ASAM KARBOKSILAT DAN DERIVATNYA":
 
     **1. Reaksi dengan Basa Kuat ($NaOH$):** Menghasilkan garam karboksilat yang larut dan air.
     """)
-    
     st.latex(r"\text{R-COOH} + \text{NaOH} \rightarrow \text{R-COONa} + \text{H}_2\text{O}")
     
     st.markdown("""
     **2. Reaksi dengan Basa Lemah ($NaHCO_3$):** Asam karboksilat tergolong cukup asam untuk mendeprotonasi natrium bikarbonat, menghasilkan garam, air, dan pelepasan gas karbon dioksida secara cepat (effervescence). Reaksi ini membedakan asam karboksilat dengan fenol (fenol tidak bereaksi dengan $NaHCO_3$).
     """)
-    
     st.latex(r"\text{R-COOH} + \text{NaHCO}_3 \rightarrow \text{R-COONa} + \text{H}_2\text{O} + \text{CO}_2\uparrow")
     
     st.markdown("""
     Jika gas $CO_2$ yang terbentuk dialirkan ke dalam air barit ($\text{Ba(OH)}_2$), akan terbentuk endapan putih barium karbonat ($\text{BaCO}_3$):
     """)
-    
     st.latex(r"\text{CO}_2 + \text{Ba(OH)}_2 \rightarrow \text{BaCO}_3\downarrow + \text{H}_2\text{O}")
     
     st.markdown("""
     **3. Esterifikasi Fischer:** Reaksi kondensasi antara asam karboksilat dengan alkohol dibantu katalis asam kuat pekat ($\text{H}_2\text{SO}_4$) menghasilkan senyawa ester yang beraroma wangi khas seperti buah-buahan.
     """)
-    
     st.latex(r"\text{R-COOH} + \text{R'-OH} \xrightarrow{\text{H}_2\text{SO}_4} \text{R-COOR'} + \text{H}_2\text{O}")
     
     st.markdown("""
-    **4. Oksidasi Asam Karboksilat:** Atom C karbonil pada asam karboksilat mengemban bilangan oksidasi +3. Asam karboksilat tertentu yang masih mengikat hidrogen bebas (like asam format atau asam oksalat) dapat dioksidasi lebih lanjut oleh oksidator kuat ($KMnO_4$ dalam $H_2SO_4$) menuju bilangan oksidasi maksimal +4 berupa gas $CO_2$.
+    **4. Oksidasi Asam Karboksilat:** Atom C karbonil pada asam karboksilat mengemban bilangan oksidasi +3. Asam karboksilat tertentu yang masih mengikat hidrogen bebas (seperti asam format atau asam oksalat) dapat dioksidasi lebih lanjut oleh oksidator kuat ($KMnO_4$ dalam $H_2SO_4$) menuju bilangan oksidasi maksimal +4 berupa gas $CO_2$.
     """)
-    
     st.latex(r"\text{R-COOH} \xrightarrow{\text{KMnO}_4 / \text{H}_2\text{SO}_4} \text{CO}_2\uparrow + \text{H}_2\text{O}")
     
     st.markdown("""
@@ -612,37 +589,33 @@ elif pilihan_halaman == "📕 BAB IV. ASAM KARBOKSILAT DAN DERIVATNYA":
 
     *Pembentukan Asam Hidroksamat dari Ester:*
     """)
-    
     st.latex(r"\text{R-COOR'} + \text{NH}_2\text{OH} \rightarrow \text{R-CONH-OH} + \text{R'OH}")
     
     st.markdown("""
     *Pembentukan Kompleks Khelat Ungu dengan $\text{FeCl}_3$:*
     """)
-    
     st.latex(r"3\text{R-CONH-OH} + \text{FeCl}_3 \rightarrow \text{Fe(R-CONHO)}_3 + 3\text{HCl}")
 
-# --- 🔬 POST TEST (BAGIAN YANG DIUBAH TOTAL SESUAI PERMINTAAN) ---
+# --- 🔬 POST TEST (BAGIAN UTAMA PERBAIKAN) ---
 elif pilihan_halaman == "🔬 POST TEST":
     st.title("🔀 Smart Flowchart Auto-Analyzer (Step-by-Step)")
     st.write("Ketikkan nama senyawa organik secara bebas. Sistem akan mengidentifikasi golongannya secara instan dan memicu simulasi eliminasi visual.")
 
     if not st.session_state.test_started:
         st.divider()
-        # Mengubah selectbox menjadi text_input agar bisa menerima berbagai nama senyawa bebas
         input_senyawa_user = st.text_input("✍️ Masukkan Nama Senyawa Kimia Organik:", placeholder="Misal: Metanol, Propanon, Asam Butanoat, Etil Asetat, Heksana...")
         
         if st.button("Mulai Identifikasi 🚀", type="primary"):
             if not input_senyawa_user.strip():
                 st.warning("⚠️ Harap ketikkan nama senyawa terlebih dahulu!")
             else:
-                # Memanggil fungsi deteksi otomatis berdasarkan teks input
                 golongan, model_key, proper_name, alasan = deteksi_golongan_dari_teks(input_senyawa_user)
                 
                 st.session_state.test_started = True
                 st.session_state.senyawa_uji = proper_name
                 st.session_state.golongan_terdeteksi = golongan
                 st.session_state.alasan_golongan = alasan
-                st.session_state.senyawa_model = model_key # Untuk memetakan ke database visual reaksi yang ada
+                st.session_state.senyawa_model = model_key
                 st.session_state.current_step = 0
                 st.session_state.log_history = []
                 st.session_state.trigger_animation = True
@@ -655,7 +628,6 @@ elif pilihan_halaman == "🔬 POST TEST":
         alasan_golongan = st.session_state.alasan_golongan
         model_key = st.session_state.senyawa_model
         
-        # MENAMPILKAN LANGSUNG STATE GOLONGAN DAN ALASANNYA DI BAGIAN ATAS SIMULATOR
         st.markdown(f"""
         <div class="kotak-analisis">
             <div class="label-analisis">🔍 HASIL DETEKSI GOLONGAN AWAL</div>
@@ -667,7 +639,6 @@ elif pilihan_halaman == "🔬 POST TEST":
         st.write("Silakan klik tombol di bawah untuk membuktikan karakteristik reaktivitas golongan senyawa tersebut secara visual.")
         st.divider()
 
-        # Mengambil jalur reaksi berdasarkan model kunci yang terdekat
         urutan = flowchart_paths[model_key]
 
         col_visual, col_log = st.columns([1, 2.5])
@@ -705,7 +676,6 @@ elif pilihan_halaman == "🔬 POST TEST":
             status_placeholder.markdown(f"<div style='text-align:center;'><em>Meneteskan {pereaksi}...</em></div>", unsafe_allow_html=True)
             time.sleep(1.5)
             
-            # Data reaksi dinamis diambil berdasarkan model kecocokan struktur senyawa
             res = database_reaksi[model_key][pereaksi]
             tube_placeholder.markdown(render_tube("65%", res["warna_akhir"], res["efek"]), unsafe_allow_html=True)
             status_placeholder.markdown("<div style='text-align:center; font-weight:bold;'>Melihat hasil reaksi...</div>", unsafe_allow_html=True)
@@ -724,7 +694,6 @@ elif pilihan_halaman == "🔬 POST TEST":
             force_rerun()
 
         elif not st.session_state.trigger_animation:
-            
             if st.session_state.current_step > 0:
                 last_pereaksi = urutan[st.session_state.current_step - 1]
                 res = database_reaksi[model_key][last_pereaksi]
